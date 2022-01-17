@@ -9,16 +9,20 @@ function MyApp(){
     const [characters, setCharacters] = useState([]);
 
     function removeOneCharacter (index) {
-        const updated = characters.filter((character, i) => {
-            return i !== index
+        //added delete call for part 6 step #4
+        makeDeleteCall(characters[index]).then(result => {
+            if (result && result.status === 204){
+                const updated = characters.filter((character, i) => {
+                    return i !== index;
+                });
+                setCharacters(updated)
+            } 
         });
-        setCharacters(updated)
     }
     
-    function updateList(person) {
-        setCharacters([...characters, person]);
-    }
 
+    //part 3
+    //-----
     async function fetchAll(){
         try {
             const response = await axios.get('http://localhost:5000/users');
@@ -37,8 +41,46 @@ function MyApp(){
             }
         });
     }, [] );
+    //-----
+
+    //part 5
+    //-----
+    async function makePostCall(person){
+        try {
+            const response = await axios.post('http://localhost:5000/users', person);
+            //part 6 - #3
+            //-----
+            person.id = response.data.id;
+            //-----
+            return response;
+        } catch (error) {
+            console.log(error);
+            return false;
+        }
+    }
+
+    function updateList(person) {
+        makePostCall(person).then(result => {
+            if (result && result.status === 201){
+                setCharacters([...characters, person]);
+            }
+        });
+    }
+    //-----
 
 
+    //part 6 - #4 (delete in frontend)
+    //-----
+    async function makeDeleteCall(person){
+        try {
+            const response = await axios.delete('http://localhost:5000/users/' + person.id, person);
+            return response;
+        } catch (error) {
+            console.log(error);
+            return false;
+        }
+    }
+    //-----
 
     return(
         <div className="container">
