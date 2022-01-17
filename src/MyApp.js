@@ -4,7 +4,6 @@ import Form from "./Form";
 import axios from "axios";
 
 
-
 function MyApp(){
     const [characters, setCharacters] = useState([]);
 
